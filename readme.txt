@@ -1,0 +1,10 @@
+实现步骤：
+1、加入依赖：ssm、jackson、mysql、druid、jsp、servlet
+2、写web.xml:
+   1)注册DispatcherServlet，目的：
+        Ⅰ创建springmvc容器对象，才能创建Controller类对象
+        Ⅱ这是个Servlet，可接受用户请求
+   2)注册spring的监听器ContextLoaderListener，目的：创建spring容器，这样才能创建service，dao等对象
+   3)注册字符过滤器，解决post请求乱码
+4、创建包
+5、分别写ssm的配置文件

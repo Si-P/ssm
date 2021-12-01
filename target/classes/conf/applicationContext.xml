@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+    <!--spring配置文件，用于声明service,dao,工具类的对象-->
+
+    <!--声明数据源，链接数据库-->
+    <context:property-placeholder location="classpath:conf/jdbc.properties" />
+    <bean id="myDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+          init-method="init" destroy-method="close" >
+        <!--set注入给DruidDataSource提供数据库信息-->
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+        <property name="maxActive" value="20" />
+    </bean>
+    <!--声明mybatis中的SqlSessionFactoryBean类-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" >
+        <!--set注入，把数据库连接池给了datasource属性-->
+        <property name="dataSource" ref="myDataSource" />
+        <!--configlocation是Resource类型的，使用classpath：表示文件的位置-->
+        <property name="configLocation" value="classpath:conf/mybatis.xml" />
+    </bean>
+    <!--创建dao对象，使用SqlSession的getMapper(*Dao.class)-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--指定SqlSessionFactory对象的id-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+        <!--指定包名，即dao接口所在包名
+            MapperScannerConfigurer会扫描这个包中所有接口，每个接口执行一次getMapper
+            得到每个接口的dao对象
+            创建好的dao对象放入spring容器中.dao对象的默认名称为接口的首字母小写
+        -->
+        <property name="basePackage" value="com.yige.dao" />
+    </bean>
+    <!--声明service的注解@Service所在包-->
+    <context:component-scan base-package="com.yige.service" />
+
+
+
+</beans>
